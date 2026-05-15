@@ -1,0 +1,74 @@
+/* @theme rayskills-zh */
+/**
+ * Marp 中文投影片主題
+ * 針對純中文或以中文為主的內容優化
+ */
+
+@import 'default';
+
+:root {
+  /* CJK 字型堆疊：優先使用系統內建 CJK 字型 */
+  font-family:
+    'PingFang TC',       /* macOS / iOS 繁體中文 */
+    '蘋方-繁',
+    'Microsoft JhengHei', /* Windows 微軟正黑體 */
+    'Noto Sans CJK TC',  /* Linux / Android */
+    'Noto Sans TC',
+    sans-serif;
+
+  /* CJK 需要更大的行高才不壓迫 */
+  line-height: 1.8;
+
+  /* 輕微字距讓中文更好讀 */
+  letter-spacing: 0.03em;
+
+  font-size: 28px;
+  color: #2c2c2c;
+}
+
+h1, h2, h3 {
+  font-family: 'PingFang TC', '蘋方-繁', 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+}
+
+h1 { font-size: 1.8em; }
+h2 { font-size: 1.4em; }
+h3 { font-size: 1.1em; }
+
+/* 條列文字：避免 CJK 溢出但不破壞英文單詞 */
+p, li {
+  overflow-wrap: anywhere;
+  word-break: normal;
+  line-break: strict;    /* 嚴格 CJK 斷行規則（不在標點前斷行）*/
+}
+
+/* 代碼：強制使用等寬字型，避免 CJK 字型影響 */
+code, pre {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  letter-spacing: 0;
+  line-height: 1.5;
+  font-size: 0.85em;
+}
+
+/* 封面頁 */
+section.cover h1 {
+  font-size: 2em;
+  margin-bottom: 0.3em;
+}
+
+/* 引用區塊 */
+blockquote {
+  border-left: 4px solid #4a90d9;
+  padding-left: 1em;
+  color: #555;
+  font-style: normal; /* CJK 斜體不好看 */
+}
+
+/* 頁碼 */
+section::after {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 0.7em;
+  color: #aaa;
+}

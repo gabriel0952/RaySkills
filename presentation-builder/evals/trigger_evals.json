@@ -1,0 +1,42 @@
+[
+  {
+    "query": "我下週要對主管報告我們這季的 API 效能優化成果，幫我做一份簡報，大概 10 分鐘的長度",
+    "should_trigger": true
+  },
+  {
+    "query": "我有一份關於 Kubernetes 架構的筆記，幫我把它整理成技術分享的投影片",
+    "should_trigger": true
+  },
+  {
+    "query": "幫我做個 marp 格式的 slides，主題是 React Server Components 介紹，對象是公司的前端工程師",
+    "should_trigger": true
+  },
+  {
+    "query": "我需要一個 20 頁的 deck 來介紹我們的新產品給潛在客戶，從問題到解決方案到定價",
+    "should_trigger": true
+  },
+  {
+    "query": "把這段會議記錄幫我轉成一份週報 slides，用 PPTX 格式",
+    "should_trigger": true
+  },
+  {
+    "query": "幫我把這份技術文件的重點整理成幾張投影片，給非技術的 stakeholder 看",
+    "should_trigger": true
+  },
+  {
+    "query": "幫我寫一篇關於 Kubernetes 的技術文章，放到公司 confluence",
+    "should_trigger": false
+  },
+  {
+    "query": "這份簡報的字體要用哪個比較好看",
+    "should_trigger": false
+  },
+  {
+    "query": "幫我把 PowerPoint 檔案轉成 PDF",
+    "should_trigger": false
+  },
+  {
+    "query": "解釋一下什麼是 reveal.js",
+    "should_trigger": false
+  }
+]

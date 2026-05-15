@@ -1,0 +1,86 @@
+/* @theme rayskills-bilingual */
+/**
+ * Marp 中英雙語投影片主題
+ * 設計重點：英文字型顯示 Latin 字元，CJK 字型作為後備
+ * 避免 CJK 字型的 Latin 字元覆蓋掉更好看的西文字型
+ */
+
+@import 'default';
+
+:root {
+  /*
+   * 字型策略：西文字型優先，CJK 字型作 fallback
+   * 原因：大多數 CJK 字型內建的 Latin 字元品質不如專用西文字型
+   * Helvetica Neue / Arial 會渲染 ASCII 字元，
+   * 遇到 CJK 字元才 fallback 到 PingFang TC / Microsoft JhengHei
+   */
+  font-family:
+    'Helvetica Neue',
+    'Arial',
+    'PingFang TC',
+    '蘋方-繁',
+    'Microsoft JhengHei',
+    'Noto Sans CJK TC',
+    'Noto Sans TC',
+    sans-serif;
+
+  /* 雙語行高取中間值 */
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+  font-size: 26px;
+  color: #2c2c2c;
+}
+
+h1, h2, h3 {
+  font-family: 'Helvetica Neue', 'Arial', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+h1 { font-size: 1.8em; }
+h2 { font-size: 1.4em; }
+h3 { font-size: 1.1em; }
+
+/* 雙語混排：避免溢出，同時不破壞英文斷字邏輯 */
+p, li {
+  overflow-wrap: anywhere; /* 允許任意位置斷行（URL、長 token 也能斷）*/
+  word-break: normal;      /* 不強制在英文單詞中間斷行 */
+  line-break: loose;       /* 寬鬆 CJK 斷行：允許在更多標點前後斷行 */
+}
+
+/* 行內代碼：混排時縮小避免破壞行高 */
+code {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 0.82em;
+  letter-spacing: 0;
+  background: #f4f4f4;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+}
+
+pre {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 0.8em;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+blockquote {
+  border-left: 4px solid #4a90d9;
+  padding-left: 1em;
+  color: #555;
+  font-style: normal; /* 雙語引用不使用斜體（CJK 斜體效果差）*/
+}
+
+/* 強調文字：粗體比斜體更適合雙語場景 */
+em {
+  font-style: normal;
+  font-weight: 600;
+  color: #1a6bb5;
+}
+
+section::after {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 0.7em;
+  color: #aaa;
+}
