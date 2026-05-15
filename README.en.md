@@ -21,9 +21,9 @@ A skill is a `SKILL.md` file that tells an AI agent what to do and when to do it
 
 ## Usage
 
-### Using in Claude / Copilot CLI
+### Using in an AI Agent
 
-1. Add the skill to your `.claude/commands/` directory, or ensure the Copilot CLI can discover these skills
+1. Add the skill to your agent's commands directory (e.g., `.claude/commands/` for Claude CLI; Copilot CLI discovers skills automatically)
 2. Say a trigger phrase — the skill loads automatically
 
 ### Adding a New Skill
@@ -50,14 +50,14 @@ cd skill-creator
 python -m scripts.run_loop \
   --eval-set ../<skill-name>/evals/trigger_evals.json \
   --skill-path ../<skill-name> \
-  --model claude-sonnet-4-5 \
+  --model <model-name> \
   --verbose
 ```
 
 ## Requirements
 
 - Python 3.9+ (3.13 recommended)
-- `claude` CLI (for description optimization loop)
+- An AI CLI tool with `-p` mode support (e.g. `claude`, `codex`, for the description optimization loop)
 - Marp CLI (for presentation-builder slide export)
 - Chrome / Chromium / Edge (required for Marp PDF/PPTX export)
 

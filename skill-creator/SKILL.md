@@ -171,7 +171,7 @@ description: [說明何時觸發、做什麼。包含使用者可能說的話。
 - [ ] 不會被太廣泛地觸發（有足夠的限定條件）
 - [ ] 避免「幫助」、「協助」等模糊動詞作為開頭
 
-### 自動化優化迴圈（推薦，需要 `claude` CLI）
+### 自動化優化迴圈（推薦，需要支援 `-p` 模式的 AI CLI）
 
 **1. 建立觸發測試集** `evals/trigger_evals.json`：
 
@@ -192,7 +192,7 @@ description: [說明何時觸發、做什麼。包含使用者可能說的話。
 python -m scripts.run_loop \
   --eval-set <skill路徑>/evals/trigger_evals.json \
   --skill-path <skill路徑> \
-  --model claude-sonnet-4-5 \
+  --model <模型名稱> \
   --max-iterations 5 \
   --verbose
 ```

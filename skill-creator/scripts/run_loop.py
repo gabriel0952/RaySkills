@@ -8,7 +8,7 @@
     python -m scripts.run_loop \\
         --eval-set evals.json \\
         --skill-path . \\
-        --model claude-sonnet-4-5 \\
+        --model <模型名稱> \\
         --max-iterations 5 \\
         --verbose
 """
@@ -86,9 +86,11 @@ def run_loop(
     model: str | None,
     verbose: bool,
     log_dir: Path | None = None,
+    cli: str = "claude",
+    commands_dir: str | None = None,
 ) -> dict:
     """執行 eval + 改善迴圈，回傳最佳結果字典。"""
-    project_root = find_project_root()
+    project_root = find_project_root(cli)
     name, original_description, content = parse_skill_md(skill_path)
     current_description = description_override or original_description
 
@@ -128,6 +130,8 @@ def run_loop(
             runs_per_query=runs_per_query,
             trigger_threshold=trigger_threshold,
             model=model,
+            cli=cli,
+            commands_dir=commands_dir,
         )
         elapsed = time.time() - t0
 
@@ -198,6 +202,7 @@ def run_loop(
             model=model,
             log_dir=log_dir,
             iteration=iteration,
+            cli=cli,
         )
         if verbose:
             print(f"  → 新 description（{time.time()-t0:.1f}s）：{new_description[:80]}...", file=sys.stderr)
@@ -239,7 +244,9 @@ def main():
     parser.add_argument("--runs-per-query", type=int, default=3, help="每查詢重複跑幾次（預設 3）")
     parser.add_argument("--trigger-threshold", type=float, default=0.5, help="觸發率門檻（預設 0.5）")
     parser.add_argument("--holdout", type=float, default=0.4, help="測試集比例（預設 0.4，設 0 停用）")
-    parser.add_argument("--model", default=None, help="指定改善用的模型（預設使用 claude -p 預設模型）")
+    parser.add_argument("--model", default=None, help="指定改善用的模型（預設使用 CLI 工具的預設模型）")
+    parser.add_argument("--cli", default="claude", help="使用的 AI CLI 工具（預設 claude）")
+    parser.add_argument("--commands-dir", default=None, help="覆蓋 commands 目錄路徑（預設依 --cli 自動決定）")
     parser.add_argument("--verbose", action="store_true", help="顯示詳細進度")
     parser.add_argument("--output", default=None, help="結果 JSON 儲存路徑（預設印到 stdout）")
     args = parser.parse_args()
@@ -265,6 +272,8 @@ def main():
         model=args.model,
         verbose=args.verbose,
         log_dir=log_dir,
+        cli=args.cli,
+        commands_dir=args.commands_dir,
     )
 
     if args.verbose:

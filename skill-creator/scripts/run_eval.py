@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """測試 skill description 的觸發準確率。
 
-透過在 .claude/commands/ 建立暫時指令檔，並以 `claude -p` 跑各個測試查詢，
-偵測 Claude 是否選擇讀取（觸發）該 skill。
+透過在 commands 目錄建立暫時指令檔，並以 AI CLI 的 `-p` 模式跑各個測試查詢，
+偵測 agent 是否選擇讀取（觸發）該 skill。預設使用 `claude` CLI；
+可透過 `--cli` 指定其他工具（需支援相同的 `-p` 與 `stream-json` 介面）。
 
 用法：
     python -m scripts.run_eval --eval-set evals.json --skill-path .
@@ -22,13 +23,22 @@ from pathlib import Path
 from scripts.utils import parse_skill_md
 
 
-def find_project_root() -> Path:
-    """往上找有 .claude/ 目錄的專案根目錄；找不到就用 cwd。"""
+def find_project_root(cli: str = "claude") -> Path:
+    """往上找對應 CLI 的 commands 目錄所在的專案根目錄；找不到就用 cwd。"""
+    commands_subdir = _commands_subdir(cli)
     current = Path.cwd()
     for parent in [current, *current.parents]:
-        if (parent / ".claude").is_dir():
+        if (parent / commands_subdir).is_dir():
             return parent
     return current
+
+
+def _commands_subdir(cli: str) -> str:
+    """回傳該 CLI 預設的 commands 目錄相對路徑。"""
+    mapping = {
+        "claude": ".claude/commands",
+    }
+    return mapping.get(cli, f".{cli}/commands")
 
 
 def run_single_query(
@@ -38,15 +48,20 @@ def run_single_query(
     timeout: int,
     project_root: str,
     model: str | None = None,
+    cli: str = "claude",
+    commands_dir: str | None = None,
 ) -> bool:
     """執行單一查詢，回傳 skill 是否被觸發。
 
-    建立暫時的 .claude/commands/<skill>.md，讓 Claude 看到這個 skill，
-    然後跑 `claude -p <query>` 並解析 stream-json 輸出來判斷是否觸發。
+    在 commands 目錄建立暫時的 skill 指令檔，讓 agent 看到這個 skill，
+    然後跑 `<cli> -p <query>` 並解析 stream-json 輸出來判斷是否觸發。
     """
     unique_id = uuid.uuid4().hex[:8]
     clean_name = f"{skill_name}-skill-{unique_id}"
-    project_commands_dir = Path(project_root) / ".claude" / "commands"
+    if commands_dir:
+        project_commands_dir = Path(commands_dir)
+    else:
+        project_commands_dir = Path(project_root) / _commands_subdir(cli)
     command_file = project_commands_dir / f"{clean_name}.md"
 
     try:
@@ -63,7 +78,7 @@ def run_single_query(
         command_file.write_text(command_content)
 
         cmd = [
-            "claude", "-p", query,
+            cli, "-p", query,
             "--output-format", "stream-json",
             "--verbose",
             "--include-partial-messages",
@@ -71,8 +86,8 @@ def run_single_query(
         if model:
             cmd.extend(["--model", model])
 
-        # 移除 CLAUDECODE 環境變數以允許在 Claude Code session 內嵌套執行
-        env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
+        # 移除 CLAUDECODE 以允許在 Claude Code session 內嵌套執行
+        env = {k: v for k, v in os.environ.items() if k not in ("CLAUDECODE", "CODEX_ENV")}
 
         process = subprocess.Popen(
             cmd,
@@ -178,6 +193,8 @@ def run_eval(
     runs_per_query: int = 1,
     trigger_threshold: float = 0.5,
     model: str | None = None,
+    cli: str = "claude",
+    commands_dir: str | None = None,
 ) -> dict:
     """跑完整 eval set，回傳結果字典。"""
     results = []
@@ -194,6 +211,8 @@ def run_eval(
                     timeout,
                     str(project_root),
                     model,
+                    cli,
+                    commands_dir,
                 )
                 future_to_info[future] = item
 
@@ -243,7 +262,9 @@ def main():
     parser.add_argument("--timeout", type=int, default=30, help="每個查詢的逾時秒數（預設 30）")
     parser.add_argument("--runs-per-query", type=int, default=3, help="每個查詢跑幾次（預設 3）")
     parser.add_argument("--trigger-threshold", type=float, default=0.5, help="觸發率門檻（預設 0.5）")
-    parser.add_argument("--model", default=None, help="指定模型（預設使用 claude -p 的預設模型）")
+    parser.add_argument("--model", default=None, help="指定模型（預設使用 CLI 工具的預設模型）")
+    parser.add_argument("--cli", default="claude", help="使用的 AI CLI 工具（預設 claude）")
+    parser.add_argument("--commands-dir", default=None, help="覆蓋 commands 目錄路徑（預設依 --cli 自動決定）")
     parser.add_argument("--verbose", action="store_true", help="顯示詳細進度")
     args = parser.parse_args()
 
@@ -255,7 +276,7 @@ def main():
     eval_set = json.loads(Path(args.eval_set).read_text())
     name, original_description, _ = parse_skill_md(skill_path)
     description = args.description or original_description
-    project_root = find_project_root()
+    project_root = find_project_root(args.cli)
 
     if args.verbose:
         print(f"測試 description：{description}", file=sys.stderr)
@@ -270,6 +291,8 @@ def main():
         runs_per_query=args.runs_per_query,
         trigger_threshold=args.trigger_threshold,
         model=args.model,
+        cli=args.cli,
+        commands_dir=args.commands_dir,
     )
 
     if args.verbose:

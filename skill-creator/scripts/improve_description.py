@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """根據 eval 結果改善 skill description。
 
-呼叫 `claude -p` 分析哪些查詢觸發失敗，並產生更好的 description。
+呼叫 AI CLI 的 `-p` 模式分析哪些查詢觸發失敗，並產生更好的 description。
+預設使用 `claude` CLI；可透過 `--cli` 指定其他工具。
 
 用法：
     python -m scripts.improve_description --eval-results results.json --skill-path .
@@ -18,14 +19,14 @@ from pathlib import Path
 from scripts.utils import parse_skill_md
 
 
-def _call_claude(prompt: str, model: str | None, timeout: int = 300) -> str:
-    """呼叫 `claude -p`，prompt 透過 stdin 傳入，回傳文字回應。"""
-    cmd = ["claude", "-p", "--output-format", "text"]
+def _call_ai_cli(prompt: str, model: str | None, cli: str = "claude", timeout: int = 300) -> str:
+    """呼叫 AI CLI 的 `-p` 模式，prompt 透過 stdin 傳入，回傳文字回應。"""
+    cmd = [cli, "-p", "--output-format", "text"]
     if model:
         cmd.extend(["--model", model])
 
-    # 移除 CLAUDECODE 以允許在 Claude Code session 內嵌套執行
-    env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
+    # 移除已知的 agent session 環境變數以允許嵌套執行
+    env = {k: v for k, v in os.environ.items() if k not in ("CLAUDECODE", "CODEX_ENV")}
 
     result = subprocess.run(
         cmd,
@@ -37,7 +38,7 @@ def _call_claude(prompt: str, model: str | None, timeout: int = 300) -> str:
     )
     if result.returncode != 0:
         raise RuntimeError(
-            f"claude -p 執行失敗（exit {result.returncode}）\nstderr: {result.stderr}"
+            f"{cli} -p 執行失敗（exit {result.returncode}）\nstderr: {result.stderr}"
         )
     return result.stdout
 
@@ -51,16 +52,17 @@ def improve_description(
     model: str | None,
     log_dir: Path | None = None,
     iteration: int | None = None,
+    cli: str = "claude",
 ) -> str:
-    """呼叫 Claude 根據 eval 結果改善 description，回傳新的 description 字串。"""
+    """呼叫 AI CLI 根據 eval 結果改善 description，回傳新的 description 字串。"""
     failed_triggers = [r for r in eval_results["results"] if r["should_trigger"] and not r["pass"]]
     false_triggers = [r for r in eval_results["results"] if not r["should_trigger"] and not r["pass"]]
 
     train_score = f"{eval_results['summary']['passed']}/{eval_results['summary']['total']}"
 
-    prompt = f"""你正在為一個名為 "{skill_name}" 的 Claude Code skill 優化 description。
+    prompt = f"""你正在為一個名為 "{skill_name}" 的 AI skill 優化 description。
 
-Skill 的 description 出現在 Claude 的 available_skills 清單中。當使用者發送查詢時，Claude 僅根據 skill 的 name 和 description 來決定是否觸發該 skill。你的目標是寫出一個能讓正確查詢觸發、不相關查詢不觸發的 description。
+Skill 的 description 出現在 AI agent 的 available_skills 清單中。當使用者發送查詢時，agent 僅根據 skill 的 name 和 description 來決定是否觸發該 skill。你的目標是寫出一個能讓正確查詢觸發、不相關查詢不觸發的 description。
 
 目前的 description：
 <current_description>
@@ -110,7 +112,7 @@ Skill 內容（供參考）：
 
 請只在 <new_description> 標籤內回傳新的 description，不要包含其他文字。"""
 
-    text = _call_claude(prompt, model)
+    text = _call_ai_cli(prompt, model, cli)
     match = re.search(r"<new_description>(.*?)</new_description>", text, re.DOTALL)
     description = match.group(1).strip().strip('"') if match else text.strip().strip('"')
 
@@ -123,7 +125,7 @@ Skill 內容（供參考）：
             f"請重新寫一個 1024 字元以內的版本，保留最重要的觸發條件。"
             f"只在 <new_description> 標籤內回傳結果。"
         )
-        shorten_text = _call_claude(shorten_prompt, model)
+        shorten_text = _call_ai_cli(shorten_prompt, model, cli)
         match = re.search(r"<new_description>(.*?)</new_description>", shorten_text, re.DOTALL)
         description = match.group(1).strip().strip('"') if match else shorten_text.strip().strip('"')
 
@@ -154,6 +156,7 @@ def main():
     parser.add_argument("--skill-path", required=True, help="Skill 目錄路徑")
     parser.add_argument("--history", default=None, help="先前嘗試歷史 JSON 路徑（選用）")
     parser.add_argument("--model", default=None, help="指定改善用的模型")
+    parser.add_argument("--cli", default="claude", help="使用的 AI CLI 工具（預設 claude）")
     parser.add_argument("--verbose", action="store_true", help="顯示詳細資訊")
     args = parser.parse_args()
 
@@ -179,6 +182,7 @@ def main():
         eval_results=eval_results,
         history=history,
         model=args.model,
+        cli=args.cli,
     )
 
     if args.verbose:
