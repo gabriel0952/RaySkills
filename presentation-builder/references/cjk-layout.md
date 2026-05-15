@@ -1,6 +1,6 @@
 # CJK 排版指南
 
-中英文混排在投影片中常見的跑版問題，以及如何使用 RaySkills 主題解決。
+中英文混排在投影片中常見的跑版問題，以及如何使用 skills 主題解決。
 
 ---
 
@@ -28,7 +28,7 @@ line-break: strict;
 **策略：英文字型優先，CJK 字型作 fallback**
 
 ```css
-/* ✅ 雙語主題（rayskills-bilingual）的做法 */
+/* ✅ 雙語主題（skills-bilingual）的做法 */
 font-family:
   'Helvetica Neue',     /* 渲染 ASCII 字元 */
   'Arial',
@@ -103,10 +103,10 @@ code {
 
 | 內容組成 | 使用主題 | 備注 |
 |---------|----------|------|
-| > 80% 中文 | `rayskills-zh` | 針對 CJK 行高、斷行優化 |
-| > 80% 英文 | `rayskills-en` | 標準西文排版 |
-| 中英各佔一定比例 | `rayskills-bilingual` | 英文字型優先，CJK fallback |
-| 有大量代碼 | `rayskills-bilingual` | em/斜體改為粗體，代碼字型正確 |
+| > 80% 中文 | `skills-zh` | 針對 CJK 行高、斷行優化 |
+| > 80% 英文 | `skills-en` | 標準西文排版 |
+| 中英各佔一定比例 | `skills-bilingual` | 英文字型優先，CJK fallback |
+| 有大量代碼 | `skills-bilingual` | em/斜體改為粗體，代碼字型正確 |
 
 ---
 
@@ -128,9 +128,9 @@ marp --theme-set /path/to/themes -- my-slides.md --pdf
 在 `settings.json` 加入：
 ```json
 "markdown.marp.themes": [
-  "/absolute/path/to/RaySkills/presentation-builder/assets/themes/rayskills-zh.css",
-  "/absolute/path/to/RaySkills/presentation-builder/assets/themes/rayskills-en.css",
-  "/absolute/path/to/RaySkills/presentation-builder/assets/themes/rayskills-bilingual.css"
+  "/absolute/path/to/skills/presentation-builder/assets/themes/skills-zh.css",
+  "/absolute/path/to/skills/presentation-builder/assets/themes/skills-en.css",
+  "/absolute/path/to/skills/presentation-builder/assets/themes/skills-bilingual.css"
 ]
 ```
 

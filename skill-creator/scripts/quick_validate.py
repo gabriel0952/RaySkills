@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""快速驗證 skill 結構是否符合 RaySkills 規範。
+"""快速驗證 skill 結構是否符合 skills 規範。
 
 用法：
     python -m scripts.quick_validate <skill_directory>

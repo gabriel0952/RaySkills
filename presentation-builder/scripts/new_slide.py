@@ -20,15 +20,15 @@ TEMPLATES_DIR = SKILL_DIR / "templates"
 TEMPLATES = {
     "zh": {
         "file": "marp-zh.md",
-        "desc": "中文投影片（rayskills-zh 主題）",
+        "desc": "中文投影片（skills-zh 主題）",
     },
     "en": {
         "file": "marp-en.md",
-        "desc": "English slides (rayskills-en theme)",
+        "desc": "English slides (skills-en theme)",
     },
     "bilingual": {
         "file": "marp-bilingual.md",
-        "desc": "中英雙語投影片（rayskills-bilingual 主題）",
+        "desc": "中英雙語投影片（skills-bilingual 主題）",
     },
 }
 

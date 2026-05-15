@@ -1,4 +1,4 @@
-# RaySkills
+# skills
 
 **English | [繁體中文](./README.md)**
 
@@ -35,7 +35,7 @@ Help me create a skill for...
 ```
 
 Or manually:
-1. Create a directory at `RaySkills/<skill-name>/`
+1. Create a directory at `skills/<skill-name>/`
 2. Write a `SKILL.md` (refer to existing skills for format)
 3. Validate the structure with `quick_validate`:
    ```bash

@@ -16,9 +16,9 @@ description: 幫使用者從零或現有素材建立投影片/簡報。當使用
 | 模板 | `templates/marp-zh.md` | 中文 Marp 起始模板 |
 | 模板 | `templates/marp-en.md` | 英文 Marp 起始模板 |
 | 模板 | `templates/marp-bilingual.md` | 雙語 Marp 起始模板 |
-| 主題 | `assets/themes/rayskills-zh.css` | 中文優化 Marp 主題 |
-| 主題 | `assets/themes/rayskills-en.css` | 英文 Marp 主題 |
-| 主題 | `assets/themes/rayskills-bilingual.css` | 雙語 Marp 主題 |
+| 主題 | `assets/themes/skills-zh.css` | 中文優化 Marp 主題 |
+| 主題 | `assets/themes/skills-en.css` | 英文 Marp 主題 |
+| 主題 | `assets/themes/skills-bilingual.css` | 雙語 Marp 主題 |
 | 參考 | `references/formats.md` | 各格式語法速查 |
 | 參考 | `references/cjk-layout.md` | CJK 排版問題與解法 |
 
@@ -46,9 +46,9 @@ description: 幫使用者從零或現有素材建立投影片/簡報。當使用
 
 | 內容語言 | 使用主題 | 說明 |
 |---------|----------|------|
-| 中文為主（> 80%） | `rayskills-zh` | CJK 行高、字型、斷行優化 |
-| 英文為主（> 80%） | `rayskills-en` | 標準西文排版 |
-| 中英混排 / 有大量代碼 | `rayskills-bilingual` | 英文字型優先，CJK fallback |
+| 中文為主（> 80%） | `skills-zh` | CJK 行高、字型、斷行優化 |
+| 英文為主（> 80%） | `skills-en` | 標準西文排版 |
+| 中英混排 / 有大量代碼 | `skills-bilingual` | 英文字型優先，CJK fallback |
 
 ---
 
@@ -87,7 +87,7 @@ description: 幫使用者從零或現有素材建立投影片/簡報。當使用
 ```markdown
 ---
 marp: true
-theme: rayskills-zh       ← 依語言選擇 zh / en / bilingual
+theme: skills-zh       ← 依語言選擇 zh / en / bilingual
 paginate: true
 backgroundColor: #ffffff
 ---
@@ -155,7 +155,7 @@ backgroundColor: #ffffff
 3. **補強建議** — 哪裡適合加入數據、截圖、或 demo
 4. **建置指令**（若使用 Marp）：
    ```bash
-   cd RaySkills/presentation-builder
+   cd skills/presentation-builder
    python -m scripts.build <檔案>.md --check  # 先預檢排版風險
    python -m scripts.build <檔案>.md --pdf    # 或 --pptx
    ```

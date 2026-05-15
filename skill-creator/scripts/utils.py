@@ -1,4 +1,4 @@
-"""Shared utilities for RaySkills skill-creator scripts."""
+"""Shared utilities for skills skill-creator scripts."""
 
 from pathlib import Path
 

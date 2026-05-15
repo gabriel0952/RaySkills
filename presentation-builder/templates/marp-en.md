@@ -1,6 +1,6 @@
 ---
 marp: true
-theme: rayskills-en
+theme: skills-en
 paginate: true
 backgroundColor: #ffffff
 ---

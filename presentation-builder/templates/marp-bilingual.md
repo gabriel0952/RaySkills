@@ -1,6 +1,6 @@
 ---
 marp: true
-theme: rayskills-bilingual
+theme: skills-bilingual
 paginate: true
 backgroundColor: #ffffff
 ---
